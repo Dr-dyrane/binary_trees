@@ -80,7 +80,7 @@ size_t binary_tree_size(const binary_tree_t *tree);
 /* Task 12 - Count the number of leaf nodes in the binary tree */
 size_t binary_tree_leaves(const binary_tree_t *tree);
 
-/* Task 13 - Count the number of nodes with at least one child in the binary tree */
+/* Task 13 - Count  number of nodes with at least 1 child : the binary tree */
 size_t binary_tree_nodes(const binary_tree_t *tree);
 
 /* Task 14 - Check the balance factor of the binary tree */
