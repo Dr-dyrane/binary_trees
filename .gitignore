@@ -1,0 +1,44 @@
+# Binary Trees Project - .gitignore
+
+This .gitignore file is used to specify which files and directories should
+be excluded from version control in the Binary Trees project.
+It helps to keep the repository clean and prevents
+unnecessary files from being tracked.
+
+## Author
+- Author: Alexander Udeogaranya
+
+## Description
+The .gitignore file for the Binary Trees project excludes
+the following types of files and directories:
+
+1. Compiled binaries and executables:
+- $(*.o): Object files generated during compilation.
+- $(*.out): Executable files created after compiling the source code.
+
+2. Editor-specific files:
+- $(*~): Temporary files created by text editors.
+- $(.*.swp): Swap files created by Vim.
+
+3. Build directories:
+- $(./build): The directory where build artifacts : stored during compilation.
+- $(./bin): The directory where executable files are generated.
+
+4. Dependency and package management files:
+- $(./vendor): The directory where dependencies or third-party libraries
+- may be installed.
+- $(./node_modules): The directory for Node.js packages.
+
+5. Miscellaneous files and directories:
+- $(.DS_Store): macOS-specific metadata files.
+- $(.vscode): Visual Studio Code editor settings and configuration.
+- $(.idea): JetBrains IDE settings and configuration.
+
+## Usage
+1. Copy this file into the root directory of your Binary Trees project.
+2. Make sure to commit and push this .gitignore file along with the rest
+of your project files.
+
+By including this .gitignore file, you ensure that these specified files and
+directories will be excluded from version control. This helps to maintain a
+clean and organized repository while avoiding unnecessary conflicts and bloat.
