@@ -16,10 +16,10 @@
  */
 struct binary_tree_s
 {
-    int n;
-    struct binary_tree_s *parent;
-    struct binary_tree_s *left;
-    struct binary_tree_s *right;
+	int n;
+	struct binary_tree_s *parent;
+	struct binary_tree_s *left;
+	struct binary_tree_s *right;
 };
 
 typedef struct binary_tree_s binary_tree_t;
@@ -34,8 +34,8 @@ typedef struct binary_tree_s heap_t;
  */
 typedef struct levelorder_queue_s
 {
-    binary_tree_t *node;
-    struct levelorder_queue_s *next;
+	binary_tree_t *node;
+	struct levelorder_queue_s *next;
 } levelorder_queue_t;
 
 /* Printing helper function */
@@ -100,7 +100,7 @@ binary_tree_t *binary_tree_uncle(binary_tree_t *node);
 
 /* Task 100 - Find the lowest common ancestor of two nodes */
 binary_tree_t *binary_trees_ancestor(const binary_tree_t *first,
-                                     const binary_tree_t *second);
+		const binary_tree_t *second);
 
 /* Task 101 - Perform a level-order traversal of the binary tree */
 void binary_tree_levelorder(const binary_tree_t *tree, void (*func)(int));
