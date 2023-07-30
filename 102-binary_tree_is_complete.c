@@ -69,6 +69,7 @@ void enqueue(const binary_tree_t *node, levelorder_queue_t **rear)
 void dequeue(levelorder_queue_t **front)
 {
 	levelorder_queue_t *temp = *front;
+
 	*front = (*front)->next;
 	free(temp);
 }
