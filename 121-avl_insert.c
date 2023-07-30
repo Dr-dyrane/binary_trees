@@ -74,10 +74,8 @@ avl_t *avl_insert_recursive(avl_t *parent, avl_t **node, int value)
 		{
 			if (value < (*node)->left->n)
 				return (binary_tree_rotate_right(*node));
-			{
-				(*node)->left = binary_tree_rotate_left((*node)->left);
-				return (binary_tree_rotate_right(*node));
-			}
+			(*node)->left = binary_tree_rotate_left((*node)->left);
+			return (binary_tree_rotate_right(*node));
 		}
 	}
 	/* If the value > current node's value,insert into the right subtree.*/
@@ -88,10 +86,8 @@ avl_t *avl_insert_recursive(avl_t *parent, avl_t **node, int value)
 		{
 			if (value > (*node)->right->n)
 				return (binary_tree_rotate_left(*node));
-			{
-				(*node)->right = binary_tree_rotate_right((*node)->right);
-				return (binary_tree_rotate_left(*node));
-			}
+			(*node)->right = binary_tree_rotate_right((*node)->right);
+			return (binary_tree_rotate_left(*node));
 		}
 	}
 	return (*node);
