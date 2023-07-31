@@ -37,8 +37,6 @@ The project is structured as follows:
   structures for binary trees.
 - The source files (.c files) in the repository contain the implementations
   of the functions defined in the header file.
-- The `binary_tree_print.c` file includes a helper function to print
-  binary trees for visualization.
 
 ## Project Structure <a name="project-structure"></a>
 
@@ -116,8 +114,6 @@ The project contains the following files:
   - `133-heap_extract.c`: Function to extract the root node from a binary heap.
   - `134-heap_to_sorted_array.c`: Function to convert a binary heap to
     a sorted array.
-- `binary_tree_print.c`: Helper function to print binary trees for
-  visualization.
 - `README.md`: This detailed README file describing the project and its
   functionalities.
 
