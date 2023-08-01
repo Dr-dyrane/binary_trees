@@ -1,5 +1,10 @@
 #include "binary_trees.h"
 
+bst_t *find_inorder_successor(bst_t *root);
+bst_t *bst_remove_node(bst_t *root, bst_t *node);
+bst_t *bst_remove_recursive(bst_t *root, bst_t *node, int value);
+bst_t *bst_remove(bst_t *root, int value);
+
 /**
  * find_inorder_successor - Finds the in-order successor of a node in a BST.
  * @root: A pointer to the root node of the BST.
@@ -30,44 +35,39 @@ bst_t *find_inorder_successor(bst_t *root)
  */
 bst_t *bst_remove_node(bst_t *root, bst_t *node)
 {
-	if (root == NULL)
-		return (NULL);
+	bst_t *parent = node->parent, *successor = NULL;
 
-	/* Search for the node to be deleted. */
-	if (node->n < root->n)
-		root->left = bst_remove_node(root->left, node);
-	else if (node->n > root->n)
-		root->right = bst_remove_node(root->right, node);
-	else
+	/* If node has no left child, replace with right child. */
+	if (node->left == NULL)
 	{
-		/* Node found for deletion. */
-
-		/* If node has no left child, replace with right child. */
-		if (root->left == NULL)
-		{
-			bst_t *temp = root->right;
-
-			free(root);
-			return (temp);
-		}
-
-		/* If node has no right child, replace with left child. */
-		else if (root->right == NULL)
-		{
-			bst_t *temp = root->left;
-
-			free(root);
-			return (temp);
-		}
-
-		/* If node has two children:replace with in-order successor. */
-		bst_t *temp = find_inorder_successor(root->right);
-
-		root->n = temp->n;
-		root->right = bst_remove_node(root->right, temp);
+		if (parent != NULL && parent->left == node)
+			parent->left = node->right;
+		else if (parent != NULL)
+			parent->right = node->right;
+		if (node->right != NULL)
+			node->right->parent = parent;
+		free(node);
+		return (parent == NULL ? node->right : root);
 	}
 
-	return (root);
+	/* If node has no right child, replace with left child. */
+	if (node->right == NULL)
+	{
+		if (parent != NULL && parent->left == node)
+			parent->left = node->left;
+		else if (parent != NULL)
+			parent->right = node->left;
+		if (node->left != NULL)
+			node->left->parent = parent;
+		free(node);
+		return (parent == NULL ? node->left : root);
+	}
+
+	/* If node has two children:replace with in-order successor. */
+	successor = find_inorder_successor(node->right);
+	node->n = successor->n;
+
+	return (bst_remove_node(root, successor));
 }
 
 /**
@@ -75,6 +75,7 @@ bst_t *bst_remove_node(bst_t *root, bst_t *node)
  * a node from a BST recursively.
  * @root: A pointer to the root node of the BST.
  * @node: A pointer to the node to delete from the BST.
+ * @value: The value to remove from the BST.
  *
  * Return: A pointer to the new root of the BST after removal.
  *
@@ -85,23 +86,17 @@ bst_t *bst_remove_node(bst_t *root, bst_t *node)
  *             If a node with the given value is found,
  *             it removes it using bst_remove_node.
  */
-bst_t *bst_remove_recursive(bst_t *root, bst_t *node)
+bst_t *bst_remove_recursive(bst_t *root, bst_t *node, int value)
 {
-	if (root == NULL)
-		return (NULL);
-
-	/**
-	 *  Search for the node to be deleted
-	 *  in the left or right subtree.
-	 */
-	if (node->n < root->n)
-		root->left = bst_remove_recursive(root->left, node);
-	else if (node->n > root->n)
-		root->right = bst_remove_recursive(root->right, node);
-	else
-		root = bst_remove_node(root, node);
-
-	return (root);
+	if (node != NULL)
+	{
+		if (node->n == value)
+			return (bst_remove_node(root, node));
+		if (node->n > value)
+			return (bst_remove_recursive(root, node->left, value));
+		return (bst_remove_recursive(root, node->right, value));
+	}
+	return (NULL);
 }
 
 /**
@@ -122,15 +117,6 @@ bst_t *bst_remove_recursive(bst_t *root, bst_t *node)
  */
 bst_t *bst_remove(bst_t *root, int value)
 {
-	/* Search for the node with the given value in the BST. */
-	bst_t *node = bst_search(root, value);
-
-	if (node == NULL)
-	{
-		/* If node with the given value is not found, return NULL. */
-		return (NULL);
-	}
-
 	/* Call the helper function to remove the node from the BST. */
-	return (bst_remove_recursive(root, node));
+	return (bst_remove_recursive(root, root, value));
 }
