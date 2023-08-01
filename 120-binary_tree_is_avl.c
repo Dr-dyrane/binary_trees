@@ -1,7 +1,12 @@
 #include "binary_trees.h"
+#include "limits.h"
+
+size_t height(const binary_tree_t *tree);
+int is_avl_recursive(const binary_tree_t *tree, int min, int max);
+int binary_tree_is_avl(const binary_tree_t *tree);
 
 /**
- * measure_height - Helper function to measure the height of a binary tree.
+ * height - Helper function to measure the height of a binary tree.
  * @tree: A pointer to the root node of the binary tree.
  *
  * Return: The height of the binary tree.
@@ -12,19 +17,17 @@
  *             plus one to account for the
  *             current node itself.
  */
-size_t measure_height(const binary_tree_t *tree)
+size_t height(const binary_tree_t *tree)
 {
-	if (tree == NULL)
-		return (0);
+	if (tree)
+	{
+		size_t left_height = 0, right_height = 0;
 
-	size_t left_height = measure_height(tree->left);
-	size_t right_height = measure_height(tree->right);
-
-	/**
-	 * Return the maximum height of the left and right subtrees
-	 * plus one for the current node.
-	 */
-	return (1 + ((left_height > right_height) ? left_height : right_height));
+		left_height = tree->left ? 1 + height(tree->left) : 1;
+		right_height = tree->right ? 1 + height(tree->right) : 1;
+		return ((left_height > right_height) ? left_height : right_height);
+	}
+	return (0);
 }
 
 /**
@@ -46,29 +49,22 @@ size_t measure_height(const binary_tree_t *tree)
  */
 int is_avl_recursive(const binary_tree_t *tree, int min, int max)
 {
-	if (tree == NULL)
-		return (1);
+	size_t left_height, right_height, balance;
 
-	/* Measure the height of the left and right subtrees.*/
-	size_t left_height = measure_height(tree->left);
-	size_t right_height = measure_height(tree->right);
-
-	/**
-	 * Calculate the balance factor
-	 * (difference in heights of left and right subtrees).
-	 */
-	int balance = (int)(left_height - right_height);
-
-	/**
-	 * Check if the AVL and binary search tree properties
-	 * are satisfied for the current node.
-	 */
-	if (balance < -1 || balance > 1 || tree->n < min || tree->n > max)
-		return (0);
-
-	/* Recursively check the left and right subtrees.*/
-	return (is_avl_recursive(tree->left, min, tree->n - 1) &&
-		is_avl_recursive(tree->right, tree->n + 1, max));
+	if (tree != NULL)
+	{
+		if (tree->n < min || tree->n > max)
+			return (0);
+		left_height = height(tree->left);
+		right_height = height(tree->right);
+		balance = left_height > right_height ? left_height - right_height :
+			right_height - left_height;
+		if (balance > 1)
+			return (0);
+		return (is_avl_recursive(tree->left, min, tree->n - 1) &&
+			is_avl_recursive(tree->right, tree->n + 1, max));
+	}
+	return (1);
 }
 
 /**
@@ -81,11 +77,10 @@ int is_avl_recursive(const binary_tree_t *tree, int min, int max)
  *             by calling the helper function is_avl_recursive
  *             with appropriate parameters.
  */
+
 int binary_tree_is_avl(const binary_tree_t *tree)
 {
 	if (tree == NULL)
 		return (0);
-
-	/* Call the helper function with the initial minimum and maximum values.*/
 	return (is_avl_recursive(tree, INT_MIN, INT_MAX));
 }
