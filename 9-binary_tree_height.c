@@ -2,27 +2,27 @@
 
 /**
  * binary_tree_height - Measures the height of a binary tree.
- * @tree: Pointer to the root node of the binary tree.
+ * @tree: A pointer to the root node of the tree to measure the height.
  *
- * Description: The height of a binary tree is the number of edges between
- * the root node and its furthest leaf node. If `tree` = NULL, the height is 0.
- *
- * Return: The height of the binary tree, or 0 if `tree` is NULL.
+ * Return: If tree is NULL, the function returns 0. Otherwise, it returns
+ *        the height of the binary tree.
  */
 size_t binary_tree_height(const binary_tree_t *tree)
 {
-	size_t left_height, right_height;
-
+	/* If the tree is NULL, it has height 0. */
 	if (tree == NULL)
 		return (0);
 
-	/* Recursively calculate the height of the left and right subtrees */
-	left_height = binary_tree_height(tree->left);
-	right_height = binary_tree_height(tree->right);
+	size_t left_height = 0, right_height = 0;
 
-	/**
-	 * Return the maximum of the two heights,
-	 * plus 1 to account for the current node
-	 */
-	return (1 + (left_height > right_height ? left_height : right_height));
+	/* Recursively calculate the height of the left subtree. */
+	if (tree->left)
+		left_height = 1 + binary_tree_height(tree->left);
+
+	/* Recursively calculate the height of the right subtree. */
+	if (tree->right)
+		right_height = 1 + binary_tree_height(tree->right);
+
+	/* Return the maximum height between the left and right subtrees. */
+	return (left_height > right_height ? left_height : right_height);
 }
