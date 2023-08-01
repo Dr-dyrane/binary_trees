@@ -13,29 +13,21 @@
  */
 binary_tree_t *binary_tree_rotate_left(binary_tree_t *tree)
 {
-	/* Check if the tree is NULL or if it doesn't have a right child. */
-	if (tree == NULL || tree->right == NULL)
-		return (tree);
+	binary_tree_t *new_root, *temp;
 
-	/* Store the new root (right child of the current root). */
-	binary_tree_t *new_root = tree->right;
-
-	/* Update the right child of the current root. */
-	tree->right = new_root->left;
-
-	/* Update the parent of the new right child (if it exists). */
-	if (new_root->left != NULL)
-		new_root->left->parent = tree;
-
-	/* Update the left child of the new root (old root). */
-	new_root->left = tree;
-
-	/* Update the parent of the new root (old parent of the current root). */
-	new_root->parent = tree->parent;
-
-	/* Update the parent of the current root (now it's the new root). */
-	tree->parent = new_root;
-
-	/* Return the new root of the rotated tree. */
-	return (new_root);
+	if (tree == NULL)
+		return (NULL);
+	if (tree->right)
+	{
+		temp = tree->right->left;
+		new_root = tree->right;
+		new_root->parent = tree->parent;
+		new_root->left = tree;
+		tree->parent = new_root;
+		tree->right = temp;
+		if (temp)
+			temp->parent = tree;
+		return (new_root);
+	}
+	return (NULL);
 }
