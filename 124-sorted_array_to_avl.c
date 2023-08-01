@@ -1,48 +1,86 @@
 #include "binary_trees.h"
-/**
- * create_avl_tree - Create the AVL tree using the half element of the array.
- * @parent: Parent of the node to create.
- * @array: Sorted array.
- * @begin: Position where the array starts.
- * @last: Position where the array ends.
- *
- * Return: The AVL tree root node, or NULL on failure.
- */
-avl_t *create_avl_tree(avl_t *parent, int *array, int begin, int last)
-{
-	avl_t *root;
-	binary_tree_t *new_node;
-	int mid = 0;
 
-	if (begin <= last)
-	{
-		mid = (begin + last) / 2;
-		new_node = binary_tree_node((binary_tree_t *)parent, array[mid]);
-		if (new_node == NULL)
-			return (NULL);
-		root = (avl_t *)new_node;
-		root->left = create_avl_tree(root, array, begin, mid - 1);
-		root->right = create_avl_tree(root, array, mid + 1, last);
-		return (root);
-	}
-	return (NULL);
-}
 /**
- * sorted_array_to_avl - Converts a sorted array to an AVL tree.
- * @array: A pointer to the first element of the sorted array.
- * @size: The size of the array.
+ * binary_tree_size - Measures the size of a binary tree.
+ * @tree: A pointer to the root node of the binary tree.
  *
- * Return: A pointer to the root node of the AVL tree, or NULL on failure.
- *
- * Description: This function converts a sorted array to a balanced AVL tree.
- *             It uses a recursive approach to build the tree by selecting the
- *             middle element of the array as the root and creating the left
- *             and right subtrees recursively from the left and right halves
- *             of the array.
+ * Return: The size of the binary tree, or 0 if the tree is NULL.
  */
-avl_t *sorted_array_to_avl(int *array, size_t size)
+size_t binary_tree_size(const binary_tree_t *tree)
 {
-	if (array == NULL || size == 0)
-		return (NULL);
-	return (create_avl_tree(NULL, array, 0, ((int)(size)) - 1));
+	if (tree == NULL)
+		return (0);
+
+	return (binary_tree_size(tree->left) + binary_tree_size(tree->right) + 1);
 }
+
+/**
+ * tree_is_complete - checks if tree is complete
+ *
+ * @tree: pointer to the tree root
+ * @i: node index
+ * @size: number of nodes
+ * Return: 1 if tree is complete, 0 otherwise
+ */
+int tree_is_complete(const binary_tree_t *tree, int i, int size)
+{
+	if (tree == NULL)
+		return (1);
+
+	if (i >= size)
+		return (0);
+
+	return (tree_is_complete(tree->left, (2 * i) + 1, size) &&
+		tree_is_complete(tree->right, (2 * i) + 2, size));
+}
+
+
+/**
+ * binary_tree_is_complete - calls to tree_is_complete function
+ *
+ * @tree: tree root
+ * Return: 1 if tree is complete, 0 otherwise
+ */
+int binary_tree_is_complete(const binary_tree_t *tree)
+{
+	size_t size;
+
+	if (tree == NULL)
+		return (0);
+
+	size = binary_tree_size(tree);
+
+	return (tree_is_complete(tree, 0, size));
+}
+
+/**
+ * max_heap - checks if parent has a greater value than its childs
+ *
+ * @tree: pointer to the node
+ * Return: 1 if parent has a greater value, 0 otherwise
+ */
+int max_heap(const binary_tree_t *tree)
+{
+	if (tree == NULL)
+		return (1);
+
+	if (tree->n > tree->parent->n)
+		return (0);
+
+	return (max_heap(tree->left) && max_heap(tree->right));
+}
+
+/**
+ * binary_tree_is_heap - Checks if a binary tree is a max binary heap.
+ * @tree: A pointer to the root node of the binary tree.
+ *
+ * Return: 1 if the tree is a max binary heap, 0 otherwise.
+ */
+int binary_tree_is_heap(const binary_tree_t *tree)
+{
+	if (!binary_tree_is_complete(tree))
+		return (0);
+
+	return (max_heap(tree->left) && max_heap(tree->right));
+}
+
