@@ -1,36 +1,50 @@
 #include "binary_trees.h"
-
 /**
- * in_order_validation - Helper function to perform in-order
- * traversal and validate BST.
- * @node: The current node being visited during in-order traversal.
- * @data: Pointer to validation_data_t to hold validation data.
+ * find_node - Finds a node in a binary search tree.
+ * @root: The root of the tree to search.
+ * @node: The node to find.
  *
- * Return: 1 if the subtree rooted at 'node' is a valid BST, otherwise 0.
+ * Return: 1 if the node is found, 0 otherwise.
  */
-int in_order_validation(const binary_tree_t *node, validation_data_t *data)
+int find_node(binary_tree_t *root, binary_tree_t *node)
 {
-	if (node == NULL)
+
+	if (root == NULL)
+		return (0);
+
+	if (node == root)
 		return (1);
 
-	/* Visit left subtree */
-	if (!in_order_validation(node->left, data))
-		return (0);
+	if (node->n < root->n)
+		return (find_node(root->left, node));
 
-	/* Check current node's value */
-	if (node->n <= data->prev_value)
-	{
-		data->has_duplicates = 1;
-		return (0);
-	}
+	if (node->n > root->n)
+		return (find_node(root->right, node));
 
-	/* Update previous value */
-	data->prev_value = node->n;
-
-	/* Visit right subtree */
-	return (in_order_validation(node->right, data));
+	return (0);
 }
+/**
+ * is_bst_recursive - Checks if a binary tree is a binary search tree.
+ * @root: The root node of the binary tree.
+ * @node: The current node being evaluated.
+ *
+ * Return: 1 if the tree is a binary search tree, 0 otherwise.
+ */
+int is_bst_recursive(binary_tree_t *root, binary_tree_t *node)
+{
+	if (root && node)
+	{
+		int new_root = 0;
 
+		new_root = find_node(root, node);
+		if (node->left)
+			new_root &= is_bst_recursive(root, node->left);
+		if (node->right)
+			new_root &= is_bst_recursive(root, node->right);
+		return (new_root);
+	}
+	return (0);
+}
 /**
  * binary_tree_is_bst - Checks if a binary tree is a valid Binary Search Tree.
  * @tree: A pointer to the root node of the tree.
@@ -51,21 +65,5 @@ int binary_tree_is_bst(const binary_tree_t *tree)
 {
 	if (tree == NULL)
 		return (0);
-
-	validation_data_t data;
-
-	data.prev_value = INT_MIN;
-
-	data.has_duplicates = 0;
-
-	/* Perform in-order traversal and validate BST */
-	if (!in_order_validation(tree, &data))
-		return (0);
-
-	/* If duplicates are found, the tree is not a valid BST */
-	if (data.has_duplicates)
-		return (0);
-
-	/* If all conditions are satisfied, the tree is a valid BST. */
-	return (1);
+	return (is_bst_recursive((binary_tree_t *)tree, (binary_tree_t *)tree));
 }

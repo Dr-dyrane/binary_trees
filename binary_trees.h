@@ -38,19 +38,6 @@ typedef struct levelorder_queue_s
 	struct levelorder_queue_s *next;
 } levelorder_queue_t;
 
-/**
- * struct validation_data - Structure to hold validation data during traversal.
- * @prev_value: Value of the previous visited node during in-order traversal.
- * @has_duplicates: Flag to indicate if duplicates are found in the tree.
- */
-typedef struct validation_data
-{
-	int prev_value;
-	int has_duplicates;
-}
-
-validation_data_t;
-
 /* Printing helper function */
 void binary_tree_print(const binary_tree_t *tree);
 
