@@ -1,10 +1,10 @@
 #include "binary_trees.h"
 
 /**
- * count_h_nodes - Counts the number of nodes inside a tree
- * @root: Pointer to tree's root node
+ * count_h_nodes - Counts the number of nodes in a binary tree.
+ * @root: Pointer to the root node of the binary tree.
  *
- * Return: Number of tree nodes
+ * Return: Number of nodes in the binary tree.
  */
 int count_h_nodes(binary_tree_t *root)
 {
@@ -16,11 +16,12 @@ int count_h_nodes(binary_tree_t *root)
 }
 
 /**
- * heap_to_sorted_array - Creates a sorted array from a max heap
- * @heap: Pointer to heap's node
- * @size: Pointer to arrays size
+ * heap_to_sorted_array - Converts a Binary Max Heap to
+ * a sorted array of integers.
+ * @heap: A pointer to the root node of the Binary Max Heap.
+ * @size: The address to store the size of the array.
  *
- * Return: Pointer to array of integeres
+ * Return: A pointer to the newly created sorted array, or NULL on failure.
  */
 int *heap_to_sorted_array(heap_t *heap, size_t *size)
 {
