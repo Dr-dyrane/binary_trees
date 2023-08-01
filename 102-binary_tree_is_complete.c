@@ -2,9 +2,9 @@
 
 levelorder_queue_t *create_node(binary_tree_t *node);
 void free_queue(levelorder_queue_t *head);
-void push(binary_tree_t *node, levelorder_queue_t *head,
+void enqueue(binary_tree_t *node, levelorder_queue_t *head,
 		levelorder_queue_t **tail);
-void pop(levelorder_queue_t **head);
+void dequeue(levelorder_queue_t **head);
 int binary_tree_is_complete(const binary_tree_t *tree);
 
 /**
@@ -16,16 +16,16 @@ int binary_tree_is_complete(const binary_tree_t *tree);
  */
 levelorder_queue_t *create_node(binary_tree_t *node)
 {
-	levelorder_queue_t *new;
+	levelorder_queue_t *new_node;
 
-	new = malloc(sizeof(levelorder_queue_t));
-	if (new == NULL)
+	new_node = malloc(sizeof(levelorder_queue_t));
+	if (!new)
 		return (NULL);
 
-	new->node = node;
-	new->next = NULL;
+	new_node->node = node;
+	new_node->next = NULL;
 
-	return (new);
+	return (new_node);
 }
 
 /**
@@ -34,50 +34,50 @@ levelorder_queue_t *create_node(binary_tree_t *node)
  */
 void free_queue(levelorder_queue_t *head)
 {
-	levelorder_queue_t *tmp;
+	levelorder_queue_t *temp;
 
-	while (head != NULL)
+	while (head)
 	{
-		tmp = head->next;
+		temp = head->next;
 		free(head);
-		head = tmp;
+		head = temp;
 	}
 }
 
 /**
- * push - Pushes a node to the back of a levelorder_queue_t queue.
- * @node: The binary tree node to print and push.
+ * enqueue - Pushes a node to the back of a levelorder_queue_t queue.
+ * @node: The binary tree node to print and enqueue.
  * @head: A double pointer to the head of the queue.
  * @tail: A double pointer to the tail of the queue.
  *
  * Description: Upon malloc failure, exits with a status code of 1.
  */
-void push(binary_tree_t *node, levelorder_queue_t *head,
+void enqueue(binary_tree_t *node, levelorder_queue_t *head,
 		levelorder_queue_t **tail)
 {
-	levelorder_queue_t *new;
+	levelorder_queue_t *new_node;
 
-	new = create_node(node);
-	if (new == NULL)
+	new_node = create_node(node);
+	if (!new_node)
 	{
 		free_queue(head);
 		exit(1);
 	}
-	(*tail)->next = new;
-	*tail = new;
+	(*tail)->next = new_node;
+	*tail = new_node;
 }
 
 /**
- * pop - Pops the head of a levelorder_queue_t queue.
+ * dequeue - Pops the head of a levelorder_queue_t queue.
  * @head: A double pointer to the head of the queue.
  */
-void pop(levelorder_queue_t **head)
+void dequeue(levelorder_queue_t **head)
 {
-	levelorder_queue_t *tmp;
+	levelorder_queue_t *temp;
 
-	tmp = (*head)->next;
+	temp = (*head)->next;
 	free(*head);
-	*head = tmp;
+	*head = temp;
 }
 
 /**
@@ -94,38 +94,38 @@ int binary_tree_is_complete(const binary_tree_t *tree)
 	levelorder_queue_t *head, *tail;
 	unsigned char flag = 0;
 
-	if (tree == NULL)
+	if (!tree)
 		return (0);
 
 	head = tail = create_node((binary_tree_t *)tree);
-	if (head == NULL)
+	if (!head)
 		exit(1);
 
-	while (head != NULL)
+	while (head)
 	{
-		if (head->node->left != NULL)
+		if (head->node->left)
 		{
 			if (flag == 1)
 			{
 				free_queue(head);
 				return (0);
 			}
-			push(head->node->left, head, &tail);
+			enqueue(head->node->left, head, &tail);
 		}
 		else
 			flag = 1;
-		if (head->node->right != NULL)
+		if (head->node->right)
 		{
 			if (flag == 1)
 			{
 				free_queue(head);
 				return (0);
 			}
-			push(head->node->right, head, &tail);
+			enqueue(head->node->right, head, &tail);
 		}
 		else
 			flag = 1;
-		pop(&head);
+		dequeue(&head);
 	}
 	return (1);
 }
