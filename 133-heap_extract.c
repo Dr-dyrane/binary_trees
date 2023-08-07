@@ -1,165 +1,139 @@
 #include "binary_trees.h"
 
 /**
- * binary_tree_height - Measures the height of a binary tree.
- * @tree: A pointer to the root node of the binary tree.
+ *count_nodes - Counts the number of nodes in a binary tree.
+ *@root: Pointer to the root node of the tree.
  *
- * Return: The height of the binary tree, or 0 if the tree is NULL.
+ *Return: Number of nodes in the tree.
  */
-size_t binary_tree_height(const binary_tree_t *tree)
+int count_nodes(binary_tree_t *root)
 {
-	size_t left_height, right_height;
-
-	if (tree == NULL)
+	if (!root)
 		return (0);
 
-	/* Calculate height of left and right subtrees recursively */
-	left_height = binary_tree_height(tree->left);
-	right_height = binary_tree_height(tree->right);
-
-	/* Return the maximum height of the left and right subtrees */
-	return (1 + (left_height > right_height ? left_height : right_height));
+	return (1 + count_nodes(root->left) + count_nodes(root->right));
 }
 
 /**
- * binary_tree_is_perfect - Checks if a binary tree is perfect.
- * @tree: A pointer to the root node of the binary tree.
- * @depth: The depth of the current node in the binary tree.
- * @level: The level of the binary tree.
- *
- * Return: 1 if the tree is perfect, 0 otherwise.
+ *bubble_down - Bubbles down a node's value to maintain the max heap property.
+ *@parent: Pointer to the parent node in the heap.
  */
-int binary_tree_is_perfect(const binary_tree_t *tree, int depth, int level)
+void bubble_down(heap_t *parent)
 {
-	if (tree == NULL)
-		return (1);
+	int temp;
+	heap_t *max_child = NULL;
 
-	/* Check if the current node is a leaf node */
-	if (tree->left == NULL && tree->right == NULL)
+	if (!parent)
+		return;
+
+	while (parent && parent->left)
 	{
-		/* For a perfect tree, all leaf nodes should be at the same level */
-		return (depth == level + 1);
-	}
+		/*Find the maximum child among left and right child */
+		max_child = parent->left;
+		if (parent->right && parent->right->n > parent->left->n)
+			max_child = parent->right;
 
-	/* Check recursively for left and right subtrees */
-	return (binary_tree_is_perfect(tree->left, depth, level + 1) &&
-		binary_tree_is_perfect(tree->right, depth, level + 1));
+		/*Swap the parent with the maximum child if necessary */
+		if (max_child->n > parent->n)
+		{
+			temp = parent->n;
+			parent->n = max_child->n;
+			max_child->n = temp;
+		}
+
+		parent = max_child;
+	}
 }
 
 /**
- * get_last_node - Gets the last node in a binary tree in level order.
- * @root: A pointer to the root node of the binary tree.
+ *get_parent - Finds the parent node of a certain node in the heap.
+ *@root: Pointer to the root node of the heap.
+ *@index: Index of the current node.
+ *@target_index: Index being searched for.
  *
- * Return: A pointer to the last node, or NULL on failure.
+ *Return: Pointer to the parent node.
  */
-heap_t *get_last_node(heap_t *root)
+heap_t *get_parent(heap_t *root, int index, int target_index)
 {
-	size_t height_left, height_right;
+	heap_t *left = NULL, *right = NULL;
 
-	/* If the tree is empty, return NULL */
-	if (root == NULL)
+	if (!root || index > target_index)
 		return (NULL);
 
-	/* Calculate the height of the left and right subtrees */
-	height_left = binary_tree_height(root->left);
-	height_right = binary_tree_height(root->right);
+	if (index == target_index)
+		return (root);
 
-	/**
-	 * If the left subtree is perfect and the right subtree is not,
-	 * continue searching on the right
-	 */
-	if (height_left == height_right && !binary_tree_is_perfect(root->right, 0, 0))
-		return (get_last_node(root->right));
+	left = get_parent(root->left, index * 2 + 1, target_index);
+	if (left)
+		return (left);
 
-	/**
-	 * If the left subtree is perfect or left height is greater than right height,
-	 * continue searching on the left
-	 */
-	if (height_left > height_right || binary_tree_is_perfect(root->left, 0, 0))
-		return (get_last_node(root->left));
+	right = get_parent(root->right, index * 2 + 2, target_index);
+	if (right)
+		return (right);
 
-	/* Otherwise, continue searching on the right */
-	return (get_last_node(root->right));
+	return (NULL);
 }
 
 /**
- * heapify_down - Restores the max heap property after extraction.
- * @root: A pointer to the root node of the binary heap.
- *
- * Return: The root node of the binary heap after restoration.
+ *remove_last_node - Removes the last node from the max heap.
+ *@root: Double pointer to the root node of the heap.
+ *@parent: Pointer to the parent node from which to remove the last node.
  */
-heap_t *heapify_down(heap_t *root)
+void remove_last_node(heap_t **root, heap_t *parent)
 {
-	heap_t *node = root;
-	int temp;
-
-	/* Loop until the node becomes a leaf or both children are smaller */
-	while (node->left != NULL)
+	if (parent == *root && !parent->left)
 	{
-		/* If the right child is > the left child, go to the right child */
-		if (node->right != NULL && node->right->n > node->left->n)
-			node = node->right;
-		else
-			node = node->left;
-
-		/* If the current node is greater than the parent, swap the values */
-		if (node->n > node->parent->n)
-		{
-			temp = node->n;
-			node->n = node->parent->n;
-			node->parent->n = temp;
-		}
+		free(*root);
+		*root = NULL;
+		return;
 	}
 
-	return (root);
+	if (parent->right)
+	{
+		/*Replace the root node with the right child and remove the right child */
+		(*root)->n = parent->right->n;
+		free(parent->right);
+		parent->right = NULL;
+	}
+	else if (parent->left)
+	{
+		/*Replace the root node with the left child and remove the left child */
+		(*root)->n = parent->left->n;
+		free(parent->left);
+		parent->left = NULL;
+	}
+
+	/*Rebalance the heap after removing the node */
+	bubble_down(*root);
 }
 
 /**
- * heap_extract - Extracts the root node from a max binary heap.
- * @root: A double pointer to the root node of the binary heap.
+ *heap_extract - Extracts the root node from a max binary heap.
+ *@root: Double pointer to the root node of the binary heap.
  *
- * Return: The value of the root node, or 0 on failure.
+ *Return: The value of the root node, or 0 on failure.
  */
 int heap_extract(heap_t **root)
 {
-	heap_t *last_node, *extracted_node;
-	int value;
+	int num_nodes, target_index = 0, max_value = 0;
+	heap_t *parent;
 
-	/* Check if the heap is empty */
-	if (root == NULL || *root == NULL)
+	if (!root || !(*root))
 		return (0);
 
-	/* Get the last node in the heap */
-	last_node = get_last_node(*root);
+	/*Get the maximum value from the root node */
+	max_value = (*root)->n;
 
-	/* Swap the values of the root node and the last node */
-	value = (*root)->n;
-	(*root)->n = last_node->n;
+	/**
+	 * Count the number of nodes in the heap and
+	 * find the index of the parent of the last node
+	 */
+	num_nodes = count_nodes(*root);
+	target_index = (num_nodes - 2) / 2;
+	parent = get_parent(*root, 0, target_index);
 
-	/* If the last node is the root, set the root to NULL & free the last node */
-	if (last_node == *root)
-	{
-		free(last_node);
-		*root = NULL;
-	}
-	else
-	{
-		/**
-		 * If the last node is a left child,
-		 * set its parent's left to NULL and free the last node
-		 */
-		if (last_node->parent->left == last_node)
-			last_node->parent->left = NULL;
-		/**
-		 * If the last node is a right child,
-		 * set its parent's right to NULL and free the last node
-		 */
-		else
-			last_node->parent->right = NULL;
-		free(last_node);
-	}
-	/* Restore the max heap property */
-	extracted_node = heapify_down(*root);
-	/* Return the value of the extracted node */
-	return (value);
+	/*Remove the last node and rebalance the heap */
+	remove_last_node(root, parent);
+
+	return (max_value);
 }
