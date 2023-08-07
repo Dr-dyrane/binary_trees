@@ -14,25 +14,34 @@ the following types of files and directories:
 
 1. Compiled binaries and executables:
 - $(*.o): Object files generated during compilation.
+*.o
 - $(*.out): Executable files created after compiling the source code.
-
+*.out
 2. Editor-specific files:
 - $(*~): Temporary files created by text editors.
+*~
 - $(.*.swp): Swap files created by Vim.
-
+.*.swp
 3. Build directories:
 - $(./build): The directory where build artifacts : stored during compilation.
+./build
 - $(./bin): The directory where executable files are generated.
+./bin
 
 4. Dependency and package management files:
 - $(./vendor): The directory where dependencies or third-party libraries
 - may be installed.
+./vendor
 - $(./node_modules): The directory for Node.js packages.
+./node_modules
 
 5. Miscellaneous files and directories:
 - $(.DS_Store): macOS-specific metadata files.
+.DS_Store
 - $(.vscode): Visual Studio Code editor settings and configuration.
+.vscode
 - $(.idea): JetBrains IDE settings and configuration.
+.idea
 
 ## Usage
 1. Copy this file into the root directory of your Binary Trees project.
